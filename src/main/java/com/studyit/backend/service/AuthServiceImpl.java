@@ -1,34 +1,24 @@
 package com.studyit.backend.service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import org.springframework.stereotype.Service;
 
 import com.studyit.backend.dto.LoginDto;
-
-import jakarta.xml.bind.DatatypeConverter;
+import com.studyit.backend.dto.TokenDto;
+import com.studyit.backend.utils.AuthUtils;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-	private static final String SECRET_KEY = "studyit";
-	
 	@Override
-	public String hashPassword(LoginDto loginDto) throws NoSuchAlgorithmException {
+	public TokenDto createToken(LoginDto loginDto, int memberSeq) {
 		String email = loginDto.getEmail();
-		String password = loginDto.getPassword();
 		
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-512");
-		} catch (NoSuchAlgorithmException nsaExp) {
-			nsaExp.printStackTrace();
-			
-		}
+		String accessToken = AuthUtils.createAccessToken(email, memberSeq);
+		String refreshToken = AuthUtils.createRefreshToken(email, memberSeq);
 		
-		md.update(email.getBytes());
-		md.update(SECRET_KEY.getBytes());
-		md.update(password.getBytes());
+		TokenDto tokenDto = new TokenDto();
+		tokenDto.setAccessToken(accessToken);
+		tokenDto.setRefreshToken(refreshToken);
 		
-		return DatatypeConverter.printBase64Binary(md.digest());
+		return tokenDto;
 	}
 }

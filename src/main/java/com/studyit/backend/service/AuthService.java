@@ -1,9 +1,8 @@
 package com.studyit.backend.service;
 
-import java.security.NoSuchAlgorithmException;
-
 import com.studyit.backend.dto.LoginDto;
+import com.studyit.backend.dto.TokenDto;
 
 public interface AuthService {
-	public String hashPassword(LoginDto loginDto) throws NoSuchAlgorithmException;
+	public TokenDto createToken(LoginDto loginDto, int memberSeq);
 }
