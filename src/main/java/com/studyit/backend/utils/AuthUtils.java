@@ -12,17 +12,11 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 
 public class AuthUtils {
-	private final static String SECRET_KEY_STR = "studyit";
+	private final static String SECRET_KEY_STR = "studyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyitstudyit";
 	
 	private final static long ACCESS_TOKEN_DURATION = 30L * 60L * 1000L;
 	
 	private final static long REFRESH_TOKEN_DURATION = 24L * 60L * 60L * 1000L;
-	
-	private final static SecretKey SECRETE_KEY;
-	
-	static {
-		SECRETE_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY_STR));
-	}
 	
 	private AuthUtils() {};
 	
@@ -53,6 +47,8 @@ public class AuthUtils {
 	}
 	
 	private static String createToken(int seq, String issuer, long duration) {
+		SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY_STR));
+		
 		Date issuedDate = createIssuedDate();
 		Date expirationDate = createExpiration(issuedDate, duration);
 		
@@ -61,7 +57,7 @@ public class AuthUtils {
 				.issuer(issuer)
 				.issuedAt(issuedDate)
 				.expiration(expirationDate)
-				.signWith(SECRETE_KEY, Jwts.SIG.HS512)
+				.signWith(secretKey, Jwts.SIG.HS512)
 				.compact();
 	}
 }
