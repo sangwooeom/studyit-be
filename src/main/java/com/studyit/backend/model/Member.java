@@ -19,6 +19,10 @@ import lombok.Setter;
 	description="tb_member 테이블에 조회하여 정보를 저장하는 Model 객체"
 )
 public class Member extends Common {
+	public Member() {
+		super();
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int seq;

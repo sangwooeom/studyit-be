@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,17 @@ import lombok.Setter;
 	description = "tb_token 테이블을 조회하여 정보를 저장하는 Model 객체"
 )
 public class Token extends Common {
+	public Token() {
+		super();
+	}
+	
+	public Token(TokenType tokenType, String token, Member member) {
+		this();
+		this.tokenType = tokenType;
+		this.token = token;
+		this.member = member;
+	}
+	
 	@Id
 	@Column(name = "token")
 	@Schema(title = "토큰")
@@ -31,7 +44,7 @@ public class Token extends Common {
 	@Enumerated(EnumType.STRING)
 	private TokenType tokenType;
 	
-	@Column(name = "member_seq")
-	@Schema(title = "회원 고유 번호")
-	private int memberSeq;
+	@ManyToOne
+	@JoinColumn(name = "member_seq")
+	private Member member;
 }

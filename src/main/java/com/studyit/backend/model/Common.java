@@ -11,6 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class Common {
+	public Common() {
+		this.createDt = Instant.now();
+		this.updateDt = Instant.now();
+		this.delYn = false;
+	}
+	
 	@Column(name = "create_dt")
 	private Instant createDt;
 	

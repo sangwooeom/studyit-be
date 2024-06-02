@@ -23,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
 	private MemberRepository memberRepository;
 	
 	@Override
-	public int getMemberSeq(LoginDto loginDto) {
+	public Member getMemberByLoginDto(LoginDto loginDto) {
 		try {
 			String email = loginDto.getEmail();
 			String password = loginDto.getPassword();
@@ -39,14 +39,38 @@ public class MemberServiceImpl implements MemberService {
 				throw ResponseStatusExceptionUtils.unauthorized();
 			}
 			
-			int memberSeq = members.get(0).getSeq();
+			Member member = members.get(0);
 			
-			return memberSeq;
+			return member;
 			
 		} catch (NoSuchAlgorithmException nsaExp) {
 			nsaExp.printStackTrace();
 			log.error("해당 서버에서 SHA-512 알고리즘을 사용할 수가 없습니다.");
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생하였습니다.");
 		}
+	}
+	
+	@Override
+	public boolean isDuplicateEmail(String email) {
+		int cnt = memberRepository.countByEmail(email);
+		
+		if (cnt > 2) {
+			log.error("tb_member 테이블 안에 삭제되지 않은 동일한 이메일이 2개 이상 있습니다.");
+			throw ResponseStatusExceptionUtils.internalServerError();
+		}
+		
+		return cnt == 1;
+	}
+	
+	@Override
+	public boolean isDuplicateNickname(String nickname) {
+		int cnt = memberRepository.countByNickname(nickname);
+		
+		if (cnt > 2) {
+			log.error("tb_member 테이블 안에 삭제되지 않은 동일한 닉네임이 2개 이상 있습니다.");
+			throw ResponseStatusExceptionUtils.internalServerError();
+		}
+		
+		return cnt == 1;
 	}
 }
