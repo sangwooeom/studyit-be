@@ -21,10 +21,11 @@ import lombok.Setter;
 public class Member extends Common {
 	public Member() {
 		super();
+		this.emailAuthYn = false;
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int seq;
 	
 	@Column(name = "email")
@@ -38,4 +39,8 @@ public class Member extends Common {
 	@Column(name = "nickname")
 	@Schema(title = "닉네임")
 	private String nickname;
+	
+	@Column(name = "email_auth_yn")
+	@Schema(title = "이메일 인증 여부")
+	private boolean emailAuthYn;
 }

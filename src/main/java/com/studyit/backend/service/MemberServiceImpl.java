@@ -4,10 +4,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.studyit.backend.dto.JoinDto;
 import com.studyit.backend.dto.LoginDto;
 import com.studyit.backend.model.Member;
 import com.studyit.backend.repository.MemberRepository;
@@ -46,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
 		} catch (NoSuchAlgorithmException nsaExp) {
 			nsaExp.printStackTrace();
 			log.error("해당 서버에서 SHA-512 알고리즘을 사용할 수가 없습니다.");
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 오류가 발생하였습니다.");
+			throw ResponseStatusExceptionUtils.internalServerError();
 		}
 	}
 	
@@ -72,5 +71,33 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		return cnt == 1;
+	}
+	
+	@Override
+	public void addMember(JoinDto joinDto) {
+		try {
+			Member member = createMemberByJoinDto(joinDto);
+			memberRepository.save(member);
+		} catch (NoSuchAlgorithmException nsae) {
+			log.error("해당 서버에서 SHA-512 알고리즘을 사용할 수가 없습니다.");
+			throw ResponseStatusExceptionUtils.internalServerError();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw ResponseStatusExceptionUtils.internalServerError();
+		}
+	}
+	
+	private Member createMemberByJoinDto(JoinDto joinDto) throws NoSuchAlgorithmException {
+		String email = joinDto.getEmail();
+		String password = joinDto.getPassword();
+		String nickname = joinDto.getNickname();
+		
+		Member member = new Member();
+		
+		member.setEmail(email);
+		member.setNickname(nickname);
+		member.setPassword(AuthUtils.encrytPassword(email, password));
+		
+		return member;
 	}
 }
