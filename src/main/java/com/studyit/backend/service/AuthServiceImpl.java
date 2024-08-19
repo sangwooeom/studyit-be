@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.studyit.backend.dto.LoginDto;
 import com.studyit.backend.dto.TokenDto;
+import com.studyit.backend.model.Member;
 import com.studyit.backend.model.Token;
 import com.studyit.backend.repository.TokenRepository;
 import com.studyit.backend.type.TokenType;
@@ -16,7 +17,8 @@ public class AuthServiceImpl implements AuthService {
 	private TokenRepository tokenRepository;
 	
 	@Override
-	public TokenDto createToken(LoginDto loginDto, int memberSeq) {
+	public TokenDto createToken(LoginDto loginDto, Member member) {
+		int memberSeq = member.getSeq();
 		String email = loginDto.getEmail();
 		
 		String accessToken = AuthUtils.createAccessToken(email, memberSeq);
@@ -30,21 +32,16 @@ public class AuthServiceImpl implements AuthService {
 	}
 	
 	@Override
-	public void saveToken(TokenDto tokenDto, int memberSeq) {
+	public void saveToken(TokenDto tokenDto, Member member) {
 		String accessToken = tokenDto.getAccessToken();
 		String refreshToken = tokenDto.getRefreshToken();
 		
-		saveToken(TokenType.ACCESS, accessToken, memberSeq);
-		saveToken(TokenType.REFRESH, refreshToken, memberSeq);
+		saveToken(TokenType.ACCESS, accessToken, member);
+		saveToken(TokenType.REFRESH, refreshToken, member);
 	}
 	
-	private void saveToken(TokenType tokenType, String tokenValue, int memberSeq) {
-		Token token = new Token();
-		
-		token.setToken(tokenValue);
-		token.setTokenType(tokenType);
-		token.setMemberSeq(memberSeq);
-		
+	private void saveToken(TokenType tokenType, String tokenValue, Member member) {
+		Token token = new Token(tokenType, tokenValue, member);		
 		tokenRepository.save(token);
 	}
 }
