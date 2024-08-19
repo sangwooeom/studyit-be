@@ -24,10 +24,11 @@ public class AuthController {
 	@Autowired
 	private MemberService memberService;
 	
-	@PostMapping("/v1/login")
+	@PostMapping("/v1/api/login")
 	public TokenDto login(@RequestBody LoginDto loginDto) {
 		int memberSeq = memberService.getMemberSeq(loginDto);
 		TokenDto tokenDto = authService.createToken(loginDto, memberSeq);
+		authService.saveToken(tokenDto, memberSeq);
 		return tokenDto;
 	}
 	
